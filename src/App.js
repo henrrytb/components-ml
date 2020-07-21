@@ -3,6 +3,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 
 import Navbar from './components/Navbar';
 import Document from './components/Document';
+import Search from './components/Search';
 
 import './styles/App.css';
 
@@ -19,7 +20,7 @@ function App() {
         </Route>
 
         <Route exact path='/buscar'>
-          <div>BUSCAR EN LA ONTOLOGIA</div>
+          <Search />
         </Route>
 
         <Route exact path='/popular'>

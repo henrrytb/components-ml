@@ -36,3 +36,16 @@
     transform: rotate(360deg);
   }
 }
+
+.automargin {
+  margin: auto !important;
+}
+
+.width-80-percent {
+  width: 80% !important;
+}
+
+.headernav {
+  display: flex;
+  justify-content: center;
+}
