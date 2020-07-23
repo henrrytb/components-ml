@@ -1,8 +1,8 @@
 import React, { useState, Fragment } from 'react';
-import { Dropdown, Table } from 'semantic-ui-react';
+import { Button, Dropdown, Table } from 'semantic-ui-react';
 
 import data from '../data/data.json';
-
+import { getRequestTemplate } from './PopulationHelpers';
 
 const componentOptions = [
   {
@@ -40,15 +40,17 @@ const componentOptions = [
 const mapItems = element => {
   return {
     name: element.brand + ' ' + element.model,
+    brand: element.brand,
     price: element.price[1],
     cores: element.cores,
   }
 }
 
-const buildTableRow = ({ isChecked, name, cores, price }) => {
+const buildTableRow = ({ name, brand, cores, price }) => {
   return (
     <Table.Row key={name}>
       <Table.Cell>{name}</Table.Cell>
+      <Table.Cell>{brand}</Table.Cell>
       <Table.Cell>{cores}</Table.Cell>
       <Table.Cell>{price}</Table.Cell>
     </Table.Row>
@@ -64,8 +66,30 @@ function Population() {
     console.log(value)
     const currentComponents = data[value].map(mapItems);
     setComponentList(currentComponents);
-    const currentItems = currentComponents.map(buildTableRow);
     setComponentItemList(currentComponents.map(buildTableRow));
+  }
+
+  const populate = () => {
+    const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+    const url = "http://component-ml.tk:3030/ComponentsML-2/update";
+    const request = getRequestTemplate(componentList[0]);
+    console.log(request)
+    fetch(proxyUrl + url, {
+      "method": "POST",
+      "headers": {
+        "content-type": "application/x-www-form-urlencoded",
+        "authorization": "Basic YWRtaW46YWRtaW4="
+      },
+      "body": {
+        "update": request
+      }
+    })
+      .then(response => {
+        console.log(response);
+      })
+      .catch(err => {
+        console.error(err);
+      });
   }
 
   return (
@@ -78,10 +102,13 @@ function Population() {
         onChange={handleChangeOption}
       />
 
+      <Button primary onClick={populate}>Populate</Button>
+
       <Table celled striped>
         <Table.Header>
           <Table.Row>
             <Table.HeaderCell>Name</Table.HeaderCell>
+            <Table.HeaderCell>Brand</Table.HeaderCell>
             <Table.HeaderCell>Cores</Table.HeaderCell>
             <Table.HeaderCell>Price</Table.HeaderCell>
           </Table.Row>
