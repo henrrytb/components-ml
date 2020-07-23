@@ -4,6 +4,7 @@ import { BrowserRouter, Switch, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import Document from './components/Document';
 import Search from './components/Search';
+import Population from './components/Population';
 
 import './styles/App.css';
 
@@ -24,7 +25,7 @@ function App() {
         </Route>
 
         <Route exact path='/popular'>
-          <div>POPULAR DATOS</div>
+          <Population />
         </Route>
       </Switch>
 
