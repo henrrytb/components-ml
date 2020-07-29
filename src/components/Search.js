@@ -15,7 +15,7 @@ function Search() {
   const handleChange = (e, { value }) => setCriteria(value)
 
   const handleSubmit = () => {
-    var request = `PREFIX uri: <http://www.semanticweb.org/antho/ontologies/2020/6/computer-components-ml-3#>
+    const request = `PREFIX uri: <http://www.semanticweb.org/antho/ontologies/2020/6/computer-components-ml-3#>
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
       
