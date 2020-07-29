@@ -1,5 +1,11 @@
 import React, { useState, Fragment } from 'react';
-import { Icon, Form, Table } from 'semantic-ui-react';
+import { Icon, Form, Table, Segment, Container} from 'semantic-ui-react';
+
+const options = [
+  { key: 'i', text: 'Ingles', value: 'ingles' },
+  { key: 'e', text: 'Español', value: 'español' },
+  { key: 't', text: 'Todos', value: 'todos' },
+]
 
 function Search() {
   const [criteria, setCriteria] = useState('')
@@ -59,25 +65,34 @@ function Search() {
 
   return (
     <Fragment>
-      <Form onSubmit={handleSubmit}>
-
-        <Form.Group>
-          <Form.Input
-            placeholder='Ingresa aqui lo que quieras buscar...'
-            name='criteria'
-            value={criteria}
-            onChange={handleChange}
-            width={8}
-            className='automargin'
-          />
-        </Form.Group>
-
-        <Form.Group>
-          <Form.Button className='automargin' type='submit' secondary><Icon name='search' />Buscar</Form.Button>
-        </Form.Group>
-      </Form>
-
-      <ParsedResult result={result} />
+      <div style={{ padding: '20px' }}>
+        <Container text> 
+          <Segment raised color='blue'>       
+            <Form onSubmit={handleSubmit}>        
+              <Form.Group>
+                <Form.Input
+                  placeholder='Ingresa aqui lo que quieras buscar...'
+                  name='criteria'
+                  value={criteria}
+                  onChange={handleChange}
+                  width={8}
+                  className='automargin'
+                />     
+                <Form.Select                                
+                  fluid    
+                  label=''
+                  options={options}
+                  placeholder=' Idioma '
+                />                         
+              </Form.Group>                
+              <Form.Group>              
+                <Form.Button className='automargin' type='submit' secondary><Icon name='search' />Buscar</Form.Button>                
+              </Form.Group>
+            </Form>
+            <ParsedResult result={result} />
+          </Segment>
+        </Container>              
+      </div>      
     </Fragment>
   )
 }
