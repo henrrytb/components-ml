@@ -27,7 +27,7 @@ function Search() {
       }
       LIMIT 50`
 
-    fetch('http://component-ml.tk:3030/ComponentsML4', {
+    fetch('http://component-ml.tk:3030/ComponentsML-2', {
       method: 'POST',
       headers: {
         'content-type': 'application/x-www-form-urlencoded'
