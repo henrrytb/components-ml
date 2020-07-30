@@ -8,22 +8,26 @@ const header = `
   PREFIX rdfs:  <http://www.w3.org/2000/01/rdf-schema#>
 `;
 
+const removeSpecialCharacters = (data = '') => {
+  return data.replace(/[^0-9a-zA-Z ]/g, '-');
+}
+
 const buildIRI = ({ Name: name = '' }) => {
-  return name.replace(/[^0-9a-zA-Z ]/g, '-').replace(/ /g, '_');
+  return removeSpecialCharacters(name).replace(/ /g, '_');
 }
 
 const buildLabels = ({ Name: name = '' }) => {
-  name = name.replace(/[^0-9a-zA-Z ]/g, '-');
+  name = removeSpecialCharacters(name);
   return `rdfs:label "${name}"@en, "${name}"@es ;`
 }
 
 const buildTripes = (component) => {
   const keys = [ ...Object.keys(component)];
-  return keys.map(current => (`${prefix}:${current}  "${component[current].replace(/[^0-9a-zA-Z ]/g, '-')}"`)).join(' ; \n') + ' . \n';
+  return keys.map(current => (`${prefix}:${current}  "${removeSpecialCharacters(component[current])}"`)).join(' ; \n') + ' . \n';
 }
 
 
-export const getRequestTemplate = (component) => {
+const getRequestTemplate = (component) => {
   const iriName = buildIRI(component);
   const labels = buildLabels(component);
   const triples = buildTripes(component)
@@ -36,4 +40,25 @@ export const getRequestTemplate = (component) => {
         ${triples}
     }
   `;
+}
+
+export const populate = (component) => {
+  const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
+  const url = "http://component-ml.tk:3030/ComponentsML-Test-Insert/update";
+  const query = getRequestTemplate(component).replace(/\n/g, '');
+  const body = 'update=' + encodeURIComponent(query);
+  fetch(proxyUrl + url, {
+    "method": "POST",
+    "headers": {
+      "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
+      "authorization": "Basic YWRtaW46YWRtaW4="
+    },
+    "body": body
+  })
+    .then(response => {
+      console.log(response);
+    })
+    .catch(err => {
+      console.error(err);
+    });
 }
