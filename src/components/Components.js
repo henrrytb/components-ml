@@ -1,7 +1,7 @@
 const components = new Map();
 const processor = {
   Name: 'table td div.table_title a',
-  Image: 'table td div.logo-name div.item-logo',
+  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   Speed: 'table td div.f_speed',
@@ -12,7 +12,7 @@ const processor = {
 
 const motherboard = {
   Name: 'table td div.table_title a',
-  Image: 'table td div.logo-name div.item-logo',
+  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   FormFactor: 'table td div.f_form_factor',
@@ -24,7 +24,7 @@ const motherboard = {
 
 const graphicsCard = {
   Name: 'table td div.table_title a',
-  Image: 'table td div.logo-name div.item-logo',
+  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   Chipset: 'table td div.f_chipset',
@@ -36,7 +36,7 @@ const graphicsCard = {
 
 const mouse = {
   Name: 'table td div.table_title a',
-  Image: 'table td div.logo-name div.item-logo',
+  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   TrackingMethod: 'table td div.f_tracking_method',
@@ -47,7 +47,7 @@ const mouse = {
 
 const keyboard = {
   Name: 'table td div.table_title a',
-  Image: 'table td div.logo-name div.item-logo',
+  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   Style: 'table td div.f_style',
@@ -59,7 +59,7 @@ const keyboard = {
 
 const monitor = {
   Name: 'table td div.table_title a',
-  Image: 'table td div.logo-name div.item-logo',
+  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   ScreenSize: 'table td div.f_screen_size',
