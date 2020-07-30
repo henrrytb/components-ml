@@ -74,6 +74,7 @@ function Population() {
 
   const handleChangeOption = async (e, { value }) => {
     setCurrentComponent(value);
+    setComponentItemList([]);
     const parsedComponents = await retrieveComponents(value);
     setComponentList(parsedComponents);
     setComponentItemList(parsedComponents.map(buildTableRow));
