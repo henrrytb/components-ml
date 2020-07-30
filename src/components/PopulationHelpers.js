@@ -12,18 +12,23 @@ const removeSpecialCharacters = (data = '') => {
   return data.replace(/[^0-9a-zA-Z ]/g, '-');
 }
 
-const buildIRI = ({ Name: name = '' }) => {
+const buildIRI = ({ nameEn: name = '' }) => {
   return removeSpecialCharacters(name).replace(/ /g, '_');
 }
 
-const buildLabels = ({ Name: name = '' }) => {
-  name = removeSpecialCharacters(name);
-  return `rdfs:label "${name}"@en, "${name}"@es ;`
+const buildLabels = ({ nameEs = '', nameEn = '' }) => {
+  return `rdfs:label "${removeSpecialCharacters(nameEn)}"@en, "${removeSpecialCharacters(nameEs)}"@es ;`
 }
 
 const buildTripes = (component) => {
+  const result = []
+  result.push(`${prefix}:Name  "${removeSpecialCharacters(component.nameEn)}"@en, "${removeSpecialCharacters(component.nameEs)}"@es`)
+  delete component.nameEn;
+  delete component.nameEs;
   const keys = [ ...Object.keys(component)];
-  return keys.map(current => (`${prefix}:${current}  "${removeSpecialCharacters(component[current])}"`)).join(' ; \n') + ' . \n';
+  result.concat(keys.map(current => (`${prefix}:${current}  "${component[current]}"`)));
+  console.log(result)
+  return result.join(' ; \n') + ' . \n';
 }
 
 
@@ -45,7 +50,8 @@ const getRequestTemplate = (component) => {
 export const populate = (component) => {
   const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
   const url = "http://component-ml.tk:3030/ComponentsML-Test-Insert/update";
-  const query = getRequestTemplate(component).replace(/\n/g, '');
+  const query = getRequestTemplate(component);
+  console.log(query)
   const body = 'update=' + encodeURIComponent(query);
   fetch(proxyUrl + url, {
     "method": "POST",
