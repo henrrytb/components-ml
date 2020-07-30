@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from 'react';
-import { Button, Dropdown, Table } from 'semantic-ui-react';
+import { Dropdown, Grid, Icon, Table } from 'semantic-ui-react';
 import $ from "jquery";
 
 import components from './Components';
@@ -9,10 +9,10 @@ const keys = Array.from(components.keys());
 
 const buildOptionFromKeys = () => {
   return keys.map(item => ({
-      key: item,
-      text: item,
-      value: item,
-    }));
+    key: item,
+    text: item,
+    value: item,
+  }));
 }
 
 function Population() {
@@ -24,9 +24,11 @@ function Population() {
 
   const getTableHeader = () => {
     const headerItems = Object.keys(components.get(currentComponent) || {});
-    return headerItems.map(item => (
+    const header = headerItems.map(item => (
       <Table.HeaderCell key={item}>{item}</Table.HeaderCell>
     ));
+    header.push((<Table.HeaderCell key='Actions'>Actions</Table.HeaderCell>))
+    return header;
   }
 
   const bulkData = (doc, type) => {
@@ -53,7 +55,17 @@ function Population() {
 
   const buildTableRow = (item) => {
     const keys = Array.from(Object.keys(item));
-    const cells = keys.map(current => (<Table.Cell>{item[current]}</Table.Cell>) )
+    const cells = keys.map(current => (<Table.Cell key={item[current]}>{item[current]}</Table.Cell>))
+    cells.push((
+      <Table.Cell>
+        <Grid>
+          <Grid.Row>
+            <Icon inverted circular color='blue' name='edit' />
+            <Icon inverted circular color='blue' name='cloud upload' onClick={() => populate(item)} />
+          </Grid.Row>
+        </Grid>
+      </Table.Cell>
+    ));
     return (
       <Table.Row key={item[keys[0]]}>
         {cells}
@@ -80,23 +92,18 @@ function Population() {
     setComponentItemList(parsedComponents.map(buildTableRow));
   }
 
-  const populate = () => {
-    if (componentList.length === 0) {
-      return;
-    }
+  const populate = (component) => {
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    const url = "http://component-ml.tk:3030/ComponentsML-1/update";
-    const request = getRequestTemplate(componentList[0]);
-    console.log(request)
+    const url = "http://component-ml.tk:3030/ComponentsML-Test-Insert/update";
+    const query = getRequestTemplate(component).replace(/\n/g, '');
+    const body = 'update=' + encodeURIComponent(query);
     fetch(proxyUrl + url, {
       "method": "POST",
       "headers": {
-        "content-type": "application/x-www-form-urlencoded",
+        "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
         "authorization": "Basic YWRtaW46YWRtaW4="
       },
-      "body": {
-        "update": request
-      }
+      "body": body
     })
       .then(response => {
         console.log(response);
@@ -115,8 +122,6 @@ function Population() {
         options={buildOptionFromKeys()}
         onChange={handleChangeOption}
       />
-
-      <Button primary onClick={populate}>Populate</Button>
 
       <Table celled striped>
         <Table.Header>
