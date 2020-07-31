@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Grid, Icon, Input, Table } from 'semantic-ui-react';
+import { Button, Grid, Input, Table } from 'semantic-ui-react';
 import { populate } from './PopulationHelpers';
 
 const buildMultilingualComponent = (component) => {
@@ -29,34 +29,51 @@ function ComponentItem({ data: item = {} }) {
     setComponent(data);
   }
 
+  const handleSave = (item) => {
+    populate(item);
+  }
+
   const buildCells = () => {
     delete item.Name;
     const keys = Array.from(Object.keys(item));
     let innerCells = [];
     innerCells.push(
       <Table.Cell key='MultilingualName'>
-        <Input disabled={isDisable} label='En' defaultValue={component.nameEn} onChange={(e, { value }) => handleOnChange('nameEn', value)} />
-        <Input disabled={isDisable} label='Es' defaultValue={component.nameEs} onChange={(e, { value }) => handleOnChange('nameEs', value)} />
+        <Grid columns={1}>
+          <Grid.Row>
+            <Grid.Column>
+              <Input disabled={isDisable} label='En' defaultValue={component.nameEn} onChange={(e, { value }) => handleOnChange('nameEn', value)} />
+            </Grid.Column>
+          </Grid.Row>
+          <Grid.Row>
+            <Grid.Column>
+              <Input disabled={isDisable} label='Es' defaultValue={component.nameEs} onChange={(e, { value }) => handleOnChange('nameEs', value)} />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
       </Table.Cell>
     );
     keys.forEach(current => {
       innerCells.push(
         <Table.Cell key={component[current]}>
-          <Input disabled={isDisable} defaultValue={component[current]} onChange={(e, { value }) => handleOnChange(current, value)} />
+          <Input size="mini" disabled={isDisable} defaultValue={component[current]} onChange={(e, { value }) => handleOnChange(current, value)} />
         </Table.Cell>
       );
     });
     innerCells.push((
-      <Table.Cell>
-        <Grid>
+      <Table.Cell key="Actions">
+        <Grid columns={2}>
           <Grid.Row>
-            <Icon inverted circular color='blue' name='edit' onClick={() => handleIsDisable()} />
-            <Icon inverted circular color='blue' name='cloud upload' onClick={() => populate(component)} />
+            <Grid.Column>
+              <Button basic color='blue' icon='edit' onClick={() => handleIsDisable()} />
+            </Grid.Column>
+            <Grid.Column>
+              <Button basic color='blue' icon='cloud upload' onClick={() => handleSave(component)} />
+            </Grid.Column>
           </Grid.Row>
         </Grid>
       </Table.Cell>
     ));
-    console.log(innerCells)
     return innerCells;
   }
 

@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from 'react';
-import { Dropdown, Table } from 'semantic-ui-react';
+import { Dropdown, Segment, Table, Grid } from 'semantic-ui-react';
 import $ from "jquery";
 
 import components from './Components';
@@ -24,7 +24,7 @@ function Population() {
   const getTableHeader = () => {
     const headerItems = Object.keys(components.get(currentComponent) || {});
     const header = headerItems.map(item => (
-      <Table.HeaderCell key={item}>{item}</Table.HeaderCell>
+      <Table.HeaderCell colSpan='1' singleLine key={item}>{item}</Table.HeaderCell>
     ));
     header.push((<Table.HeaderCell key='Actions'>Actions</Table.HeaderCell>))
     return header;
@@ -59,7 +59,6 @@ function Population() {
     const componentsText = await componentsPage.text();
     const bulkedData = bulkData(componentsText, type);
     const componentsList = await buildComponents(bulkedData, type);
-    console.log(componentsList);
     return componentsList;
   }
 
@@ -67,19 +66,32 @@ function Population() {
     setCurrentComponent(value);
     setComponentItemList([]);
     const parsedComponents = await retrieveComponents(value);
-    const componentsItems = parsedComponents.map(item => (<ComponentItem data={item} />));
+    const componentsItems = parsedComponents.map(item => (<ComponentItem key={JSON.stringify(item)} data={item} />));
     setComponentItemList(componentsItems);
   }
 
   return (
     <Fragment>
-      <Dropdown
-        placeholder="Select Component"
-        fluid
-        selection
-        options={buildOptionFromKeys()}
-        onChange={handleChangeOption}
-      />
+      <Segment>
+        <Grid columns={2}>
+          <Grid.Row textAlign='justified'>
+            <Grid.Column textAlign='center'>
+              <p>
+                Select a component type
+              </p>
+            </Grid.Column>
+            <Grid.Column>
+              <Dropdown
+                placeholder="Select Component"
+                fluid
+                selection
+                options={buildOptionFromKeys()}
+                onChange={handleChangeOption}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        </Grid>
+      </Segment>
 
       <Table celled striped>
         <Table.Header>

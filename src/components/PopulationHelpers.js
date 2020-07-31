@@ -26,7 +26,7 @@ const buildTripes = (component) => {
   delete component.nameEn;
   delete component.nameEs;
   const keys = [ ...Object.keys(component)];
-  result.concat(keys.map(current => (`${prefix}:${current}  "${component[current]}"`)));
+  keys.forEach(current => result.push(`${prefix}:${current}  "${component[current]}"`));
   console.log(result)
   return result.join(' ; \n') + ' . \n';
 }
