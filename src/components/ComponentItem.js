@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Button, Grid, Input, Table } from 'semantic-ui-react';
+import { Button, Grid, Input, Table} from 'semantic-ui-react';
 import { populate } from './PopulationHelpers';
 
 const buildMultilingualComponent = (component) => {
@@ -37,7 +37,7 @@ function ComponentItem({ data: item = {} }) {
     delete item.Name;
     const keys = Array.from(Object.keys(item));
     let innerCells = [];
-    innerCells.push(
+    innerCells.push(            
       <Table.Cell key='MultilingualName'>
         <Grid columns={1}>
           <Grid.Row>
@@ -51,16 +51,16 @@ function ComponentItem({ data: item = {} }) {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-      </Table.Cell>
+      </Table.Cell>      
     );
     keys.forEach(current => {
-      innerCells.push(
+      innerCells.push(      
         <Table.Cell key={component[current]}>
           <Input size="mini" disabled={isDisable} defaultValue={component[current]} onChange={(e, { value }) => handleOnChange(current, value)} />
-        </Table.Cell>
+        </Table.Cell>    
       );
     });
-    innerCells.push((
+    innerCells.push((      
       <Table.Cell key="Actions">
         <Grid columns={2}>
           <Grid.Row>
@@ -72,12 +72,12 @@ function ComponentItem({ data: item = {} }) {
             </Grid.Column>
           </Grid.Row>
         </Grid>
-      </Table.Cell>
+      </Table.Cell>      
     ));
     return innerCells;
   }
 
-  return (
+  return (    
     <Table.Row key={item.Name}>
       {buildCells()}
     </Table.Row>

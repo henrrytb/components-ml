@@ -11,3 +11,9 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+div.scroll_horizontal {  
+  overflow-x: auto;
+  height: 410px;
+	width: auto px;
+}

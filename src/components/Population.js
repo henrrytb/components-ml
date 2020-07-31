@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from 'react';
-import { Dropdown, Segment, Table, Grid } from 'semantic-ui-react';
+import { Dropdown, Segment, Table, Grid, Container, Divider} from 'semantic-ui-react';
 import $ from "jquery";
 
 import components from './Components';
@@ -72,37 +72,45 @@ function Population() {
 
   return (
     <Fragment>
-      <Segment>
-        <Grid columns={2}>
-          <Grid.Row textAlign='justified'>
-            <Grid.Column textAlign='center'>
-              <p>
-                Select a component type
-              </p>
-            </Grid.Column>
-            <Grid.Column>
-              <Dropdown
-                placeholder="Select Component"
-                fluid
-                selection
-                options={buildOptionFromKeys()}
-                onChange={handleChangeOption}
-              />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Segment>
-
-      <Table celled striped>
-        <Table.Header>
-          <Table.Row>
-            {getTableHeader()}
-          </Table.Row>
-        </Table.Header>
-        <Table.Body>
-          {componentItemList}
-        </Table.Body>
-      </Table>
+      <div style={{ padding: '20px' }}>      
+        <Container text>       
+          <Segment raised color='blue'>
+            <Grid columns={2}>
+              <Grid.Row textAlign='justified'>
+                <Grid.Column textAlign='center'>
+                  <p>
+                    Select a component type
+                  </p>
+                </Grid.Column>
+                <Grid.Column>
+                  <Dropdown
+                    placeholder="Select Component"
+                    fluid
+                    selection
+                    options={buildOptionFromKeys()}
+                    onChange={handleChangeOption}
+                  />
+                </Grid.Column>
+              </Grid.Row>
+            </Grid>
+          </Segment>
+        </Container>
+      </div>
+      <Divider clearing/>
+        <Container>        
+          <div class='scroll_horizontal'>                      
+            <Table celled striped> 
+              <Table.Header>
+                <Table.Row>
+                  {getTableHeader()}
+                </Table.Row>
+              </Table.Header>
+              <Table.Body>
+                {componentItemList}
+              </Table.Body>          
+            </Table>                  
+          </div>
+        </Container>         
     </Fragment>);
 }
 
