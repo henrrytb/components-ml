@@ -1,17 +1,17 @@
 import React, { useState, Fragment } from 'react';
-import { Icon, Form, Table, Segment, Container} from 'semantic-ui-react';
+import { Icon, Form, Table, Segment, Container,Divider} from 'semantic-ui-react';
 
 const options = [
-  { key: 'i', text: 'Ingles', value: 'ingles' },
-  { key: 'e', text: 'Español', value: 'español' },
-  { key: 't', text: 'Todos', value: 'todos' },
+  { key: '1', text: 'Ingles', value: 'en' },
+  { key: '2', text: 'Español', value: 'es' },
+  { key: '3', text: 'Todos', value: 'todos' },
 ]
 
 function Search() {
   const [criteria, setCriteria] = useState('')
 
   const [result, setResult] = useState('')
-
+  
   const handleChange = (e, { value }) => setCriteria(value)
 
   const handleSubmit = () => {
@@ -47,7 +47,7 @@ function Search() {
   function ParsedResult({ result }) {
     if (result) {
       return (
-        <Table color='blue' key='blue' className='width-80-percent automargin'>
+        <Table key='blue' className='width-80-percent automargin'>
           <Table.Header>
             <Table.Row>
               {result.head.vars.map((title) =>
@@ -82,9 +82,10 @@ function Search() {
                   width={8}
                   className='automargin'
                 />
-                <Form.Select
+                <Form.Select                  
                   fluid
                   label=''
+                  //onChange={(e, { value }) => alert(value)} 
                   options={options}
                   placeholder=' Idioma '
                 />
@@ -92,10 +93,11 @@ function Search() {
               <Form.Group>
                 <Form.Button className='automargin' type='submit' secondary><Icon name='search' />Buscar</Form.Button>
               </Form.Group>
-            </Form>
-            <ParsedResult result={result} />
+            </Form>            
           </Segment>
         </Container>
+        <Divider clearing/>
+        <ParsedResult result={result} />
       </div>
     </Fragment>
   )
