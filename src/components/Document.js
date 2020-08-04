@@ -1,13 +1,13 @@
 import React from 'react';
 import { Divider, Segment, Image, Container } from 'semantic-ui-react'
-import img from './images/multilingual.png';
-import img2 from './images/rdf.png';
-import img3 from './images/example.png';
-import img4 from './images/example2.png';
-import img5 from './images/example3.png';
-import img6 from './images/fuseki.png';
-import img7 from './images/componentes.png';
-import img8 from './images/marcas.png';
+import img from '../images/multilingual.png';
+import img2 from '../images/rdf.png';
+import img3 from '../images/example.png';
+import img4 from '../images/example2.png';
+import img5 from '../images/example3.png';
+import img6 from '../images/fuseki.png';
+import img7 from '../images/componentes.png';
+import img8 from '../images/marcas.png';
 
 function Document() {
   return (    

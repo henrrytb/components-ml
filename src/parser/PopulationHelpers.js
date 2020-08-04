@@ -12,27 +12,23 @@ const removeSpecialCharacters = (data = '') => {
   return data.replace(/[^0-9a-zA-Z ]/g, '-');
 }
 
-const buildIRI = ({ nameEn: name = '' }) => {
-  return removeSpecialCharacters(name).replace(/ /g, '_');
+const buildIRI = ({ Name = {}}) => {
+  return removeSpecialCharacters(Name.en).replace(/ /g, '_');
 }
 
-const buildLabels = ({ nameEs = '', nameEn = '' }) => {
-  return `rdfs:label "${removeSpecialCharacters(nameEn)}"@en, "${removeSpecialCharacters(nameEs)}"@es ;`
+const buildLabels = ({ Name = {}}) => {
+  return `rdfs:label "${removeSpecialCharacters(Name.en)}"@en, "${removeSpecialCharacters(Name.es)}"@es ;`
 }
 
 const buildTripes = (component) => {
   const result = []
-  result.push(`${prefix}:Name  "${removeSpecialCharacters(component.nameEn)}"@en, "${removeSpecialCharacters(component.nameEs)}"@es`)
-  delete component.nameEn;
-  delete component.nameEs;
   const keys = [ ...Object.keys(component)];
-  keys.forEach(current => result.push(`${prefix}:${current}  "${component[current]}"`));
+  keys.forEach(current => result.push(`${prefix}:${current}  "${component[current].en}"@en, "${component[current].es}"@es`));
   console.log(result)
   return result.join(' ; \n') + ' . \n';
 }
 
-
-const getRequestTemplate = (component) => {
+const getRequestTemplate = (component, type) => {
   const iriName = buildIRI(component);
   const labels = buildLabels(component);
   const triples = buildTripes(component)
@@ -40,24 +36,24 @@ const getRequestTemplate = (component) => {
     ${header}
     INSERT DATA {
       ${prefix}:${iriName}
-        a ${prefix}:Component , owl:NamedIndividual ;
+        a ${prefix}:${type} , owl:NamedIndividual ;
         ${labels}
         ${triples}
     }
   `;
 }
 
-export const populate = (component) => {
+export const populate = (component, type = 'Component') => {
   const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-  const url = "http://component-ml.tk:3030/ComponentsML-Test-Insert/update";
-  const query = getRequestTemplate(component);
-  console.log(query)
+  const url = "http://component-ml.tk:3030/components/update";
+  const query = getRequestTemplate(component, type);
   const body = 'update=' + encodeURIComponent(query);
+
   fetch(proxyUrl + url, {
     "method": "POST",
     "headers": {
       "content-type": "application/x-www-form-urlencoded;charset=UTF-8",
-      "authorization": "Basic YWRtaW46YWRtaW4="
+      "authorization": "Basic YXJpZWw6YXJpZWw="
     },
     "body": body
   })

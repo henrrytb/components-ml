@@ -1,7 +1,6 @@
 const components = new Map();
 const processor = {
   Name: 'table td div.table_title a',
-  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   Speed: 'table td div.f_speed',
@@ -12,7 +11,6 @@ const processor = {
 
 const motherboard = {
   Name: 'table td div.table_title a',
-  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   FormFactor: 'table td div.f_form_factor',
@@ -24,7 +22,6 @@ const motherboard = {
 
 const graphicsCard = {
   Name: 'table td div.table_title a',
-  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   Chipset: 'table td div.f_chipset',
@@ -36,7 +33,6 @@ const graphicsCard = {
 
 const mouse = {
   Name: 'table td div.table_title a',
-  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   TrackingMethod: 'table td div.f_tracking_method',
@@ -47,7 +43,6 @@ const mouse = {
 
 const keyboard = {
   Name: 'table td div.table_title a',
-  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
   Style: 'table td div.f_style',
@@ -59,23 +54,29 @@ const keyboard = {
 
 const monitor = {
   Name: 'table td div.table_title a',
-  // Image: 'table td div.logo-name div.item-logo',
   Brand: 'table td div.f_brand',
   Model: 'table td div.f_model',
-  ScreenSize: 'table td div.f_screen_size',
+  ScreenSize: 'table td div.f_screen',
   Resolution: 'table td div.f_resolution',
   AspectRatio: 'table td div.f_aspect_ratio',
   ResponseTime: 'table td div.f_response_time',
   Price: 'table>tbody>tr>td:nth-child(4)'
 }
 
+components.set('CPU', processor);
+components.set('Motherboard', motherboard);
+components.set('Video Card', graphicsCard);
+components.set('Keyboard', keyboard);
+components.set('Monitor', monitor);
+components.set('Mouse', mouse);
 
+const buildPCUrls = {
+  'CPU': 'processor',
+  'Motherboard': 'motherboard',
+  'Video Card': 'graphics_card',
+  'Keyboard': 'keyboard',
+  'Monitor': 'monitor',
+  'Mouse': 'mouse',
+}
 
-components.set('processor', processor);
-components.set('motherboard', motherboard);
-components.set('graphics_card', graphicsCard);
-components.set('keyboard', keyboard);
-components.set('monitor', monitor);
-components.set('mouse', mouse);
-
-export default components;
+export {components, buildPCUrls};

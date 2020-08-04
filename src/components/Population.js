@@ -1,8 +1,8 @@
 import React, { useState, Fragment } from 'react';
-import { Dropdown, Segment, Table, Grid, Container, Divider} from 'semantic-ui-react';
+import { Segment, Table, Form, Container, Divider } from 'semantic-ui-react';
 import $ from "jquery";
 
-import components from './Components';
+import {components, buildPCUrls} from '../parser/ComponentMap';
 import ComponentItem from './ComponentItem';
 
 const keys = Array.from(components.keys());
@@ -18,7 +18,6 @@ const buildOptionFromKeys = () => {
 function Population() {
 
   const [currentComponent, setCurrentComponent] = useState('');
-
   const [componentItemList, setComponentItemList] = useState([]);
 
   const getTableHeader = () => {
@@ -46,7 +45,10 @@ function Population() {
     const componentsList = bulkedData[keys[0]].map((item, index) => {
       return keys.reduce((accumulated, current) => ({
         ...accumulated,
-        [current]: bulkedData[current][index],
+        [current]: {
+          en: bulkedData[current][index],
+          es: bulkedData[current][index],
+        }
       }), {});
     });
     return componentsList;
@@ -54,7 +56,7 @@ function Population() {
 
   const retrieveComponents = async (type) => {
     const proxyUrl = 'https://cors-anywhere.herokuapp.com/';
-    const resourcesUrl = 'https://buildmypc.net/product/' + type;
+    const resourcesUrl = 'https://buildmypc.net/product/' + buildPCUrls[type];
     const componentsPage = await fetch(proxyUrl + resourcesUrl);
     const componentsText = await componentsPage.text();
     const bulkedData = bulkData(componentsText, type);
@@ -66,51 +68,45 @@ function Population() {
     setCurrentComponent(value);
     setComponentItemList([]);
     const parsedComponents = await retrieveComponents(value);
-    const componentsItems = parsedComponents.map(item => (<ComponentItem key={JSON.stringify(item)} data={item} />));
+    const componentsItems = parsedComponents.map(item => (<ComponentItem key={JSON.stringify(item)} data={item} type={value}/>));
+
     setComponentItemList(componentsItems);
   }
 
   return (
     <Fragment>
-      <div style={{ padding: '20px' }}>      
-        <Container text>       
+      <div style={{ padding: '20px' }}>
+        <Container text>
           <Segment raised color='blue'>
-            <Grid columns={2}>
-              <Grid.Row textAlign='justified'>
-                <Grid.Column textAlign='center'>
-                  <p>
-                    Select a component type
-                  </p>
-                </Grid.Column>
-                <Grid.Column>
-                  <Dropdown
-                    placeholder="Select Component"
-                    fluid
-                    selection
-                    options={buildOptionFromKeys()}
-                    onChange={handleChangeOption}
-                  />
-                </Grid.Column>
-              </Grid.Row>
-            </Grid>
+            <Form>
+              <Form.Group>
+                <Form.Select
+                  label='Selecciona el tipo de componente:'
+                  options={buildOptionFromKeys()}
+                  onChange={handleChangeOption}
+                  className='automargin'
+                  placeholder='--No seleccionado--'
+                />
+              </Form.Group>
+            </Form>
           </Segment>
         </Container>
       </div>
-      <Divider clearing/>
-        <Container>        
-          <div class='scroll_horizontal'>                      
-            <Table celled striped> 
-              <Table.Header>
-                <Table.Row>
-                  {getTableHeader()}
-                </Table.Row>
-              </Table.Header>
-              <Table.Body>
-                {componentItemList}
-              </Table.Body>          
-            </Table>                  
-          </div>
-        </Container>         
+      <Divider clearing />
+      <Container>
+        <div className='scroll_horizontal'>
+          <Table celled>
+            <Table.Header>
+              <Table.Row>
+                {getTableHeader()}
+              </Table.Row>
+            </Table.Header>
+            <Table.Body>
+              {componentItemList}
+            </Table.Body>
+          </Table>
+        </div>
+      </Container>
     </Fragment>);
 }
 

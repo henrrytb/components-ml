@@ -1,21 +1,11 @@
 import React, { useState } from 'react';
-import { Button, Grid, Input, Table} from 'semantic-ui-react';
-import { populate } from './PopulationHelpers';
+import { Button, Input, Table, Segment, Divider } from 'semantic-ui-react';
+import { populate } from '../parser/PopulationHelpers';
 
-const buildMultilingualComponent = (component) => {
-  const data = {
-    ...component,
-    nameEs: `${component.Brand} ${component.Model}`,
-    nameEn: `${component.Brand} ${component.Model}`,
-  }
-  delete data.Name;
-  return data;
-}
-
-function ComponentItem({ data: item = {} }) {
+function ComponentItem({ data: item = {}, type }) {
 
   const [isDisable, setIsDisable] = useState(true);
-  const [component, setComponent] = useState(buildMultilingualComponent(item));
+  const [component, setComponent] = useState(item);
 
   const handleIsDisable = () => {
     setIsDisable(!isDisable);
@@ -30,55 +20,49 @@ function ComponentItem({ data: item = {} }) {
   }
 
   const handleSave = (item) => {
-    populate(item);
+    populate(item, type);
   }
 
   const buildCells = () => {
-    delete item.Name;
     const keys = Array.from(Object.keys(item));
     let innerCells = [];
-    innerCells.push(            
-      <Table.Cell key='MultilingualName'>
-        <Grid columns={1}>
-          <Grid.Row>
-            <Grid.Column>
-              <Input disabled={isDisable} label='En' defaultValue={component.nameEn} onChange={(e, { value }) => handleOnChange('nameEn', value)} />
-            </Grid.Column>
-          </Grid.Row>
-          <Grid.Row>
-            <Grid.Column>
-              <Input disabled={isDisable} label='Es' defaultValue={component.nameEs} onChange={(e, { value }) => handleOnChange('nameEs', value)} />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Table.Cell>      
-    );
+
     keys.forEach(current => {
-      innerCells.push(      
-        <Table.Cell key={component[current]}>
-          <Input size="mini" disabled={isDisable} defaultValue={component[current]} onChange={(e, { value }) => handleOnChange(current, value)} />
-        </Table.Cell>    
+
+      innerCells.push(
+        <Table.Cell key={JSON.stringify(component[current])}>
+          <Segment basic textAlign='center'>
+            <Divider horizontal>Ingles</Divider>
+            <div>
+              {isDisable
+                ? <div>{component[current].en}</div>
+                : <Input value={component[current].en} onChange={(e, { value }) => handleOnChange(current, value)} />
+              }
+            </div>
+            <Divider horizontal>Español</Divider>
+            <div>
+              {isDisable
+                ? <div>{component[current].en}</div>
+                : <Input disabled={isDisable} value={component[current].es} onChange={(e, { value }) => handleOnChange(current, value)} />
+              }
+            </div>
+          </Segment>
+        </Table.Cell>
       );
     });
-    innerCells.push((      
+    innerCells.push((
       <Table.Cell key="Actions">
-        <Grid columns={2}>
-          <Grid.Row>
-            <Grid.Column>
-              <Button basic color='blue' icon='edit' onClick={() => handleIsDisable()} />
-            </Grid.Column>
-            <Grid.Column>
-              <Button basic color='blue' icon='cloud upload' onClick={() => handleSave(component)} />
-            </Grid.Column>
-          </Grid.Row>
-        </Grid>
-      </Table.Cell>      
+        <Segment.Inline>
+          <Button secondary icon='edit' onClick={() => handleIsDisable()} />
+          <Button secondary icon='cloud upload' onClick={() => handleSave(component)} />
+        </Segment.Inline>
+      </Table.Cell>
     ));
     return innerCells;
   }
 
-  return (    
-    <Table.Row key={item.Name}>
+  return (
+    <Table.Row key={JSON.stringify(item.Name)}>
       {buildCells()}
     </Table.Row>
   );

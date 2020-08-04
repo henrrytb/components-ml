@@ -1,5 +1,5 @@
 import React, { useState, Fragment } from 'react';
-import { Icon, Form, Table, Segment, Container,Divider} from 'semantic-ui-react';
+import { Icon, Form, Table, Segment, Container, Divider } from 'semantic-ui-react';
 
 const options = [
   { key: '1', text: 'Ingles', value: 'en' },
@@ -7,31 +7,80 @@ const options = [
   { key: '3', text: 'Todos', value: 'todos' },
 ]
 
-function Search() {
-  const [criteria, setCriteria] = useState('')
+const typeOptions = [
+  { key: '1', text: 'Internal Component', value: 'InternalComponent' },
+  { key: '2', text: 'External Component', value: 'ExternalComponent' },
+  { key: '3', text: 'CPU', value: 'CPU' },
+  { key: '4', text: 'Mouse', value: 'Mouse' },
+  { key: '5', text: 'Keyboard', value: 'Keyboard' },
+  { key: '6', text: 'Monitor', value: 'Monitor' },
+  { key: '7', text: 'Motherboard', value: 'Motherboard' },
+  { key: '8', text: 'Video Card', value: 'Video Card' },
+  { key: '9', text: 'Component', value: 'Component' },
+]
 
-  const [result, setResult] = useState('')
-  
-  const handleChange = (e, { value }) => setCriteria(value)
+function Search() {
+  const [criteria, setCriteria] = useState('');
+  const [language, setLanguage] = useState('todos');
+  const [type, setType] = useState('Component');
+
+  const [result, setResult] = useState('');
+
+  const handleChangeCriteria = (e, { value }) => setCriteria(value);
+  const handleChangeLanguage = (e, { value }) => setLanguage(value);
+  const handleChangeType = (e, { value }) => setType(value);
+
+  const getLanguageTag = (language) => language === 'todos' ? '' : ` && LANGMATCHES(LANG(?name), "${language}")`;
+
+  const buildQueryBody = () => {
+    switch (type) {
+      case 'InternalComponent':
+      case 'ExternalComponent':
+        return `SELECT ?name ?price
+        WHERE {
+          ?x rdfs:subClassOf uri:${type} .
+          ?y rdf:type ?x.
+          ?y uri:Name?name.
+          ?y uri:Price?price.
+          FILTER( 
+            REGEX(str(?name), "${criteria}","i")${getLanguageTag(language)}
+          )
+        }`;
+      default:
+        return `SELECT ?name ?price
+        WHERE {  
+          { 
+            ?x rdfs:subClassOf uri:ExternalComponent .
+            ?y rdf:type ?x.
+            ?y uri:Name?name.
+            ?y uri:Price?price.
+            FILTER( 
+              REGEX(str(?name), "${criteria}","i")${getLanguageTag(language)}
+            )
+          } 
+          UNION 
+          { 
+            ?x rdfs:subClassOf uri:InternalComponent .
+            ?y rdf:type ?x.
+            ?y uri:Name?name.
+            ?y uri:Price?price.
+            FILTER( 
+              REGEX(str(?name), "${criteria}","i")${getLanguageTag(language)}
+            )
+          }  
+        }`;
+    }
+  }
 
   const handleSubmit = () => {
-    const request = `PREFIX uri: <http://www.semanticweb.org/antho/ontologies/2020/6/computer-components-ml-3#>
+    const request = `
+      PREFIX uri: <http://www.semanticweb.org/antho/ontologies/2020/6/computer-components-ml-3#>
       PREFIX rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#>
       PREFIX rdfs: <http://www.w3.org/2000/01/rdf-schema#>
 
-      SELECT *
-      WHERE {
-        ?x rdf:type uri:Component;
-          rdfs:label?label;
-          uri:Name?name;
-          uri:Brand?brand;
-          uri:Model?model;
-          uri:Price?price.
-        FILTER( REGEX(str(?label), "${criteria}","i") && LANGMATCHES(LANG(?label), "en"))
-      }
-      LIMIT 50`
+      ${buildQueryBody()}`
 
-    fetch('http://component-ml.tk:3030/ComponentsML-Test-Insert/sparql', {
+    fetch('http://component-ml.tk:3030/components/sparql', {
       method: 'POST',
       headers: {
         'content-type': 'application/x-www-form-urlencoded;charset=UTF-8'
@@ -47,21 +96,25 @@ function Search() {
   function ParsedResult({ result }) {
     if (result) {
       return (
-        <Table key='blue' className='width-80-percent automargin'>
-          <Table.Header>
-            <Table.Row>
-              {result.head.vars.map((title) =>
-                <Table.HeaderCell>{title}</Table.HeaderCell>)}
-            </Table.Row>
-          </Table.Header>
+        <Container>
+          <div className='scroll_horizontal'>
+            <Table key='blue'>
+              <Table.Header>
+                <Table.Row>
+                  {result.head.vars.map((title) =>
+                    <Table.HeaderCell>{title}</Table.HeaderCell>)}
+                </Table.Row>
+              </Table.Header>
 
-          <Table.Body>
-            {result.results.bindings.map((binding) =>
-              <Table.Row>{result.head.vars.map((title) =>
-                <Table.Cell>{binding[title].value}</Table.Cell>)}
-              </Table.Row>)}
-          </Table.Body>
-        </Table>)
+              <Table.Body>
+                {result.results.bindings.map((binding) =>
+                  <Table.Row>{result.head.vars.map((title) =>
+                    <Table.Cell>{binding[title].value}</Table.Cell>)}
+                  </Table.Row>)}
+              </Table.Body>
+            </Table>
+          </div>
+        </Container>)
     } else {
       return <div></div>
     }
@@ -74,29 +127,37 @@ function Search() {
           <Segment raised color='blue'>
             <Form onSubmit={handleSubmit}>
               <Form.Group>
+              <Form.Select
+                  label='Tipo:'
+                  options={typeOptions}
+                  value={type}
+                  placeholder='Tipo'
+                  onChange={handleChangeType}
+                />
                 <Form.Input
+                  label='Crietrio de busqueda:'
                   placeholder='Ingresa aqui lo que quieras buscar...'
                   name='criteria'
                   value={criteria}
-                  onChange={handleChange}
-                  width={8}
+                  onChange={handleChangeCriteria}
+                  width={10}
                   className='automargin'
                 />
-                <Form.Select                  
-                  fluid
-                  label=''
-                  //onChange={(e, { value }) => alert(value)} 
+                <Form.Select
+                  label='Lenguaje:'
                   options={options}
-                  placeholder=' Idioma '
+                  value={language}
+                  placeholder='Idioma'
+                  onChange={handleChangeLanguage}
                 />
               </Form.Group>
               <Form.Group>
                 <Form.Button className='automargin' type='submit' secondary><Icon name='search' />Buscar</Form.Button>
               </Form.Group>
-            </Form>            
+            </Form>
           </Segment>
         </Container>
-        <Divider clearing/>
+        <Divider clearing />
         <ParsedResult result={result} />
       </div>
     </Fragment>
