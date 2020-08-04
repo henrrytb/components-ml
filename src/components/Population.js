@@ -2,7 +2,7 @@ import React, { useState, Fragment } from 'react';
 import { Segment, Table, Form, Container, Divider } from 'semantic-ui-react';
 import $ from "jquery";
 
-import {components, buildPCUrls} from '../parser/ComponentMap';
+import { components, buildPCUrls } from '../parser/ComponentMap';
 import ComponentItem from './ComponentItem';
 
 const keys = Array.from(components.keys());

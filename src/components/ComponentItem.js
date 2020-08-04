@@ -11,10 +11,15 @@ function ComponentItem({ data: item = {}, type }) {
     setIsDisable(!isDisable);
   }
 
-  const handleOnChange = (attribute, value) => {
+  const handleOnChange = (attribute, value, language) => {
+    const temp = {
+      ...component[attribute], 
+      [language]: value
+    };
+    console.log(temp)
     const data = {
       ...component,
-      [attribute]: value,
+      [attribute]: temp,
     }
     setComponent(data);
   }
@@ -36,14 +41,14 @@ function ComponentItem({ data: item = {}, type }) {
             <div>
               {isDisable
                 ? <div>{component[current].en}</div>
-                : <Input value={component[current].en} onChange={(e, { value }) => handleOnChange(current, value)} />
+                : <Input value={component[current].en} onChange={(e, { value }) => handleOnChange(current, value, 'en')} />
               }
             </div>
             <Divider horizontal>Español</Divider>
             <div>
               {isDisable
                 ? <div>{component[current].en}</div>
-                : <Input disabled={isDisable} value={component[current].es} onChange={(e, { value }) => handleOnChange(current, value)} />
+                : <Input value={component[current].es} onChange={(e, { value }) => handleOnChange(current, value, 'es')} />
               }
             </div>
           </Segment>

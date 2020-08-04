@@ -1,5 +1,6 @@
 import React, { useState, Fragment } from 'react';
 import { Icon, Form, Table, Segment, Container, Divider } from 'semantic-ui-react';
+import { components } from '../parser/ComponentMap';
 
 const options = [
   { key: '1', text: 'Ingles', value: 'en' },
@@ -30,44 +31,47 @@ function Search() {
   const handleChangeLanguage = (e, { value }) => setLanguage(value);
   const handleChangeType = (e, { value }) => setType(value);
 
-  const getLanguageTag = (language) => language === 'todos' ? '' : ` && LANGMATCHES(LANG(?name), "${language}")`;
+  const getLanguageTag = () => language === 'todos' ? '' : ` && LANGMATCHES(LANG(?name), "${language}")`;
 
   const buildQueryBody = () => {
+    const properties = Object.keys(components.get(type) || {});
     switch (type) {
       case 'InternalComponent':
       case 'ExternalComponent':
-        return `SELECT ?name ?price
+        return `SELECT ?Name ?Price
         WHERE {
           ?x rdfs:subClassOf uri:${type} .
           ?y rdf:type ?x.
-          ?y uri:Name?name.
-          ?y uri:Price?price.
-          FILTER( 
-            REGEX(str(?name), "${criteria}","i")${getLanguageTag(language)}
-          )
+          ?y uri:Name?Name.
+          ?y uri:Price?Price.
+          FILTER( REGEX(str(?Name), "${criteria}","i")${getLanguageTag()} ).
         }`;
-      default:
-        return `SELECT ?name ?price
+      case 'Component':
+        return `SELECT ?Name ?Price
         WHERE {  
           { 
             ?x rdfs:subClassOf uri:ExternalComponent .
             ?y rdf:type ?x.
-            ?y uri:Name?name.
-            ?y uri:Price?price.
-            FILTER( 
-              REGEX(str(?name), "${criteria}","i")${getLanguageTag(language)}
-            )
+            ?y uri:Name?Name.
+            ?y uri:Price?Price.
+            FILTER( REGEX(str(?Name), "${criteria}","i")${getLanguageTag()} ).
           } 
           UNION 
           { 
             ?x rdfs:subClassOf uri:InternalComponent .
             ?y rdf:type ?x.
-            ?y uri:Name?name.
-            ?y uri:Price?price.
-            FILTER( 
-              REGEX(str(?name), "${criteria}","i")${getLanguageTag(language)}
-            )
+            ?y uri:Name?Name.
+            ?y uri:Price?Price.
+            FILTER( REGEX(str(?Name), "${criteria}","i")${getLanguageTag()} ).
           }  
+        }`;
+      default:
+        return `SELECT DISTINCT ${properties.map(property => `?${property}`).join(' ')}
+        WHERE {
+          ?x rdf:type uri:${type};
+            ${properties.map(property => `uri:${property}?${property}`).join('; ')}
+          FILTER( REGEX(str(?Name), "${criteria}","i") ).
+          ${language === 'todos' ? '' : properties.map(property => ` FILTER ( LANG(?${property}) = "${language}" )`).join('. ')}
         }`;
     }
   }
